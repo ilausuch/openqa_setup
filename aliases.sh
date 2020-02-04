@@ -27,3 +27,14 @@ function run_opensuse(){
 function run_sle(){
     /usr/share/openqa/script/clone_job.pl --skip-chained-deps --from openqa.suse.de $1
 }
+
+function git_update_in_branch(){
+  line=$(git status | head -n 1)
+  branch=${line##* }
+
+  git checkout master && \
+  git fetch --all && \
+  git pull && \
+  git checkout $branch && \
+  git rebase master
+}
