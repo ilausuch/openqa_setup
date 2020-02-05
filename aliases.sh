@@ -28,13 +28,29 @@ function run_sle(){
     /usr/share/openqa/script/clone_job.pl --skip-chained-deps --from openqa.suse.de $1
 }
 
-function git_update_in_branch(){
+function git_update(){
   line=$(git status | head -n 1)
   branch=${line##* }
 
-  git checkout master && \
-  git fetch --all && \
-  git pull && \
-  git checkout $branch && \
-  git rebase master
+  if [ "$branch" = "master" ]; then
+    git fetch --all && \
+    git pull
+  else
+    git checkout master && \
+    git fetch --all && \
+    git pull && \
+    git checkout $branch && \
+    git rebase master
+  fi
+}
+
+function git_update_all(){
+  pushd .
+  cd /var/lib/openqa/tests/os-autoinst-distri-opensuse/
+  git_update
+  cd /var/lib/openqa/tests/os-autoinst-distri-opensuse/products/opensuse/needles/
+  git_update
+  cd /var/lib/openqa/tests/os-autoinst-distri-opensuse/products/sle/needles
+  git_update
+  popd
 }
